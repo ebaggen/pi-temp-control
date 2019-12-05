@@ -29,24 +29,25 @@ if __name__ == '__main__':
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(fan_pin, GPIO.OUT)
     pwm = GPIO.PWM(fan_pin, pwm_freq)
-    pwm.start()
+    pwm.start(0)
 
     kp = config['pid']['kp']
     ki = config['pid']['ki']
     kd = config['pid']['kd']
     sp = config['pid']['setpoint']
     sample_time = config['pid']['sample_time']
-    pid = PID(Kp=kp, Ki=ki, Kd=kd, setpoint=sp, sample_time=sample_time)
+    pid = PID(Kp=kp, Ki=ki, Kd=kd, setpoint=sp, sample_time=sample_time, output_limits=(-100,0))
 
     try:
         while True:
             pv = get_temp()
-            cv = pid(pv)
+            cv = pid(pv) * -1  # Invert cv to make a reverse acting loop
             pwm.ChangeDutyCycle(cv)
 
             time.sleep(SLEEP_INTERVAL)
 
     except KeyboardInterrupt:
+        print('Exiting....')
         pwm.stop()
         GPIO.cleanup()
         sys.exit()
