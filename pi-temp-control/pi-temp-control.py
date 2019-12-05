@@ -3,6 +3,7 @@
 import subprocess
 import time
 import RPi.GPIO as GPIO
+import toml
 from simple_pid import PID
 
 ON_THRESHOLD = 45
@@ -21,6 +22,9 @@ def get_temp():
 
 
 if __name__ == '__main__':
+    # Load configuration file
+    config = toml.load('config.toml')
+
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(GPIO_PIN, GPIO.OUT)
     pwm = GPIO.PWM(GPIO_PIN, 1000)
