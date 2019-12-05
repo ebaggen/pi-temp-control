@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # Load configuration file
     config = toml.load('config.toml')
 
-    fan_pin = config['wiring']['fan_pin']
+    fan_pin = config['io']['fan_pin']
     pwm_freq = config['io']['pwm_freq']
 
     GPIO.setmode(GPIO.BCM)
