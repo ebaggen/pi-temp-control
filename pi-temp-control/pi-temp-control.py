@@ -7,7 +7,7 @@ import RPi.GPIO as GPIO
 import toml
 from simple_pid import PID
 
-SLEEP_INTERVAL = 1
+SLEEP_INTERVAL = 0.1
 
 
 def get_temp():
