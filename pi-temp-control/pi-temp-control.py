@@ -19,32 +19,52 @@ def get_temp():
         raise RuntimeError('Could not parse temperature output')
 
 
+def pid_control():
+    while True:
+        pv = get_temp()
+        cv = pid(pv) * -1  # Invert cv to make a reverse acting loop
+        pwm.ChangeDutyCycle(cv)
+        time.sleep(SLEEP_INTERVAL)
+
+
+def on_off_control():
+    while True:
+        pv = get_temp()
+        if pv >= config['control.on_off']['on_temperature']:
+            pass
+        elif pv <= config['control.on_off']['off_temperature']:
+            pass
+        time.sleep(SLEEP_INTERVAL)
+
+
 if __name__ == '__main__':
     # Load configuration file
     config = toml.load('config.toml')
 
+    mode = config['control']['mode']
     fan_pin = config['io']['fan_pin']
-    pwm_freq = config['io']['pwm_freq']
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(fan_pin, GPIO.OUT)
-    pwm = GPIO.PWM(fan_pin, pwm_freq)
-    pwm.start(0)
 
-    kp = config['pid']['kp']
-    ki = config['pid']['ki']
-    kd = config['pid']['kd']
-    sp = config['pid']['setpoint']
-    sample_time = config['pid']['sample_time']
-    pid = PID(Kp=kp, Ki=ki, Kd=kd, setpoint=sp, sample_time=sample_time, output_limits=(-100,0))
+    # PID mode setup
+    if mode == 'pid':
+        pwm = GPIO.PWM(fan_pin, config['io']['pwm_freq'])
+        pwm.start(0)
+
+        sample_time = config['control.pid']['sample_time']
+        pid = PID(Kp=config['control.pid']['kp'],
+                  Ki=config['control.pid']['ki'],
+                  Kd=config['control.pid']['kd'],
+                  setpoint=config['control.pid']['setpoint'],
+                  sample_time=config['control.pid']['sample_time'],
+                  output_limits=(-100, 0))
 
     try:
-        while True:
-            pv = get_temp()
-            cv = pid(pv) * -1  # Invert cv to make a reverse acting loop
-            pwm.ChangeDutyCycle(cv)
-
-            time.sleep(SLEEP_INTERVAL)
+        if mode == 'on_off':
+            on_off_control()
+        elif mode == 'pid':
+            pid_control()
 
     except KeyboardInterrupt:
         print('Exiting....')

@@ -1,9 +1,15 @@
-[pid]
-kp = 10.0
-ki = 0.1
-kd = 0.0
-sample_time = 1
-setpoint = 45
+[control]
+mode = 'on_off'
+    [control.on_off]
+    on_temperature = 50.0
+    off_temperature = 40.0
+
+    [control.pid]
+    kp = 10.0
+    ki = 0.1
+    kd = 0.0
+    sample_time = 1
+    setpoint = 45
 
 [io]
 fan_pin = 18
