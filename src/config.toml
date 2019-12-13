@@ -1,15 +1,16 @@
 [control]
+# modes can be 'on_off' or 'pid'
 mode = 'on_off'
     [control.on_off]
-    on_temperature = 50.0
-    off_temperature = 40.0
+    on_temperature = 50.0  # deg C
+    off_temperature = 40.0  # deg C
 
     [control.pid]
     kp = 10.0
     ki = 0.1
     kd = 0.0
-    sample_time = 1
-    setpoint = 45
+    sample_time = 1  # in seconds
+    setpoint = 45  # deg C
 
 [io]
 fan_pin = 18
