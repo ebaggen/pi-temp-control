@@ -1,4 +1,6 @@
 [control]
+simulate = true
+
 # modes can be 'on_off' or 'pid'
 mode = 'on_off'
     [control.on_off]
