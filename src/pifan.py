@@ -7,7 +7,6 @@ import RPi.GPIO as GPIO
 import toml
 from random import random
 from simple_pid import PID
-2
 SLEEP_INTERVAL = 0.1
 
 
